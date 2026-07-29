@@ -35,6 +35,7 @@ import kotlinx.coroutines.time.delay
 import java.util.Random
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 
 //fixed
 val random = Random()
@@ -72,27 +73,42 @@ class MainActivity : ComponentActivity() {
 fun Go() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().padding(40.dp)) {
         Text(
             text = "Reaction Time Tester",
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = TextStyle(fontSize = 30.sp)
+        )
+        Text(
+            text = ("START: To start the test."),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             style = TextStyle(fontSize = 20.sp)
         )
         Text(
-            text = "Last reaction time: $lastTime",
+            text = ("WAIT: Wait a random delay."),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = TextStyle(fontSize = 20.sp)
+        )
+        Text(
+            text = ("END: Ends the test."),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = TextStyle(fontSize = 20.sp)
+        )
+        Text(
+            text = "Last reaction time: $lastTime ms",
             modifier = Modifier.padding(16.dp),
-            style = TextStyle(fontSize = 12.sp)
+            style = TextStyle(fontSize = 25.sp)
         )
         if (buttonMode == "START") {
-            FilledTonalButton(onClick = { coroutineScope.launch { wait1() } }) {
+            FilledTonalButton(onClick = { coroutineScope.launch { wait1() } }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text("START")
             }
         } else if (buttonMode == "WAIT") {
-            OutlinedButton({ Toast.makeText(context, "Wait for end button.", Toast.LENGTH_LONG).show() }) {
+            OutlinedButton({ Toast.makeText(context, "Wait for end button.", Toast.LENGTH_LONG).show() }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text("WAIT")
             }
         } else if (buttonMode == "END") {
-            Button(onClick = { end() }) {
+            Button(onClick = { end() }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text("END")
             }
         }
