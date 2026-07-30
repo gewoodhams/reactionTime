@@ -154,6 +154,7 @@ suspend fun wait1(){
     signalTimeMsStart = System.currentTimeMillis()
     val waitDuration = rand(1000, 3000).toLong()
     delay(waitDuration.milliseconds)
+    signalTimeMsStart += waitDuration
     buttonMode = "END"
 }
 
