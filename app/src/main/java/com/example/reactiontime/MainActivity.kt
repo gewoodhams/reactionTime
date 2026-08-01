@@ -58,6 +58,9 @@ fun rand(from: Int, to: Int) : Int {
 var signalTimeMsStart: Long = 0L
 var signalTimeMsEnd: Long = 0L
 
+var pastScores = mutableListOf<Int>()
+
+
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,20 +111,28 @@ fun Go() {
                         Text(text = "2. Wait a random number of milliseconds.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
                         Text(text = "3. Press STOP when it appears to end the test.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
                         Text(text = "4. Review your score next to 'Last Reaction Time'.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
-                        Text(text = "5. Use 'History' to see past attempts.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
+                        Text(text = "5. Toggle 'See History' to see past attempts.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
+                        Text(text = "Note: 'See History' is available after 3 attempts.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
                     }
                 }
             Text(
-                text = "Last reaction time: $lastTime ms",
+                text = "Last reaction time: ${lastTime}ms",
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = TextStyle(fontSize = 25.sp)
             )
-            TextButton(onClick = { displayPrevious = !displayPrevious }) { Text("See History") }
-            if (displayPrevious){
-                Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
-                    
+            if ((pastScores.lastIndex)>=2)
+                TextButton(onClick = { displayPrevious = !displayPrevious }) { Text("See History") }
+                if (displayPrevious){
+                    Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
+                        Text(text = "Lowest: ${pastScores.minWith(Comparator.comparingInt {it})}ms")
+                        Text(text = "Average: ${findAverage()}ms")
+                        Text(text = "Highest: ${pastScores.maxWith(Comparator.comparingInt {it})}ms")
+                        Text(text = " ")
+                        Text(text = "Attempt ${(pastScores.lastIndex)+1}: ${pastScores[(pastScores.lastIndex)]}ms")
+                        Text(text = "Attempt ${(pastScores.lastIndex)}: ${pastScores[(pastScores.lastIndex)-1]}ms")
+                        Text(text = "Attempt ${(pastScores.lastIndex)-1}: ${pastScores[(pastScores.lastIndex)-2]}ms")
+                    }
                 }
-            }
             when (buttonMode) {
                 "START" -> {
                     FilledTonalButton(
@@ -162,4 +173,10 @@ fun end(){
     buttonMode = "START"
     signalTimeMsEnd = System.currentTimeMillis()
     lastTime = (signalTimeMsEnd - signalTimeMsStart).toInt()
+    pastScores.addLast(lastTime)
+}
+
+fun findAverage(): Int {
+    val average = pastScores.average().toInt()
+    return average
 }
