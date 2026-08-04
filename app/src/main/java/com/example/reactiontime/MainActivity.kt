@@ -1,5 +1,6 @@
 package com.example.reactiontime
 
+//android imports for the project
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
@@ -10,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -41,26 +41,25 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontStyle
 import kotlin.time.Duration.Companion.milliseconds
 
-//fixed
+//lambda function for random & Java rand function
 val random = Random()
-
-//variable
-var buttonMode by mutableStateOf("START") //PINK
-var lastTime by mutableIntStateOf(0) //BLUE
-var displayInstructions by mutableStateOf(false)
-var displayPrevious by mutableStateOf(false)
-
-
-//runtime
 fun rand(from: Int, to: Int) : Int {
     return random.nextInt(to - from) + from
 }
-var signalTimeMsStart: Long = 0L
-var signalTimeMsEnd: Long = 0L
 
+//mutable state variables (for UI updates when they change)
+var buttonMode by mutableStateOf("START")
+var lastTime by mutableIntStateOf(0)
+var displayInstructions by mutableStateOf(false)
+var displayPrevious by mutableStateOf(false)
 var pastScores = mutableListOf<Int>()
 
 
+//standard variables
+var signalTimeMsStart: Long = 0L
+var signalTimeMsEnd: Long = 0L
+
+//to create instance of app, automatically inserted by IntelliJ
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,11 +75,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+//function behind app
 @Preview(showBackground = true)
 @Composable
 fun Go() {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current //to see context from other apps or services on the users device when needed.
+    val coroutineScope = rememberCoroutineScope() //allows co-routines
 
     val dynamicBackgroundBrush = Brush.linearGradient(
         colors = listOf(
@@ -88,7 +89,7 @@ fun Go() {
             MaterialTheme.colorScheme.secondaryContainer.copy(alpha=0.5f),
             MaterialTheme.colorScheme.background
         )
-    )
+    ) //sets material you theme in the app
 
     Box(modifier = Modifier.fillMaxSize().background(brush = dynamicBackgroundBrush)){
 
@@ -105,7 +106,7 @@ fun Go() {
                 style = TextStyle(fontSize = 30.sp)
             )
             TextButton(onClick = { displayInstructions = !displayInstructions }) { Text("See Instructions") }
-                if (displayInstructions){
+                if (displayInstructions){ //toggleable button logic
                     Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
                         Text(text = "1. Press START to start the test.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
                         Text(text = "2. Wait a random number of milliseconds.", style = TextStyle(fontSize = 12.sp, fontStyle = FontStyle.Italic))
@@ -122,11 +123,11 @@ fun Go() {
             )
             if ((pastScores.lastIndex)>=2)
                 TextButton(onClick = { displayPrevious = !displayPrevious }) { Text("See History") }
-                if (displayPrevious){
+                if (displayPrevious){ //history toggleable
                     Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
-                        Text(text = "Lowest: ${pastScores.minWith(Comparator.comparingInt {it})}ms")
+                        Text(text = "Lowest: ${pastScores.minWith(Comparator.comparingInt {it})}ms")//finds and displays min result
                         Text(text = "Average: ${findAverage()}ms")
-                        Text(text = "Highest: ${pastScores.maxWith(Comparator.comparingInt {it})}ms")
+                        Text(text = "Highest: ${pastScores.maxWith(Comparator.comparingInt {it})}ms") //finds and displays max result
                         Text(text = " ")
                         Text(text = "Attempt ${(pastScores.lastIndex)+1}: ${pastScores[(pastScores.lastIndex)]}ms")
                         Text(text = "Attempt ${(pastScores.lastIndex)}: ${pastScores[(pastScores.lastIndex)-1]}ms")
@@ -144,7 +145,7 @@ fun Go() {
                 }
                 "WAIT" -> {
                     OutlinedButton(
-                        { Toast.makeText(context, "Wait for end button.", Toast.LENGTH_LONG).show() },
+                        { Toast.makeText(context, "Wait for end button.", Toast.LENGTH_LONG).show() }, //shows text tip at the bottom asking user to wait until "END" appears
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text("WAIT")
