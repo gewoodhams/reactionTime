@@ -61,7 +61,7 @@ var signalTimeMsEnd: Long = 0L
 
 //to create instance of app, automatically inserted by IntelliJ
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter") //suppresses context warning
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -91,14 +91,14 @@ fun Go() {
         )
     ) //sets material you theme in the app
 
-    Box(modifier = Modifier.fillMaxSize().background(brush = dynamicBackgroundBrush)){
+    Box(modifier = Modifier.fillMaxSize().background(brush = dynamicBackgroundBrush)){ //sets app background
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center //style for main layout
         ) {
             Text(
                 text = "Reaction Time Tester",
@@ -117,19 +117,19 @@ fun Go() {
                     }
                 }
             Text(
-                text = "Last reaction time: ${lastTime}ms",
+                text = "Last reaction time: ${lastTime}ms", //displays lastTime to screen, default zero.
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = TextStyle(fontSize = 25.sp)
             )
             if ((pastScores.lastIndex)>=2)
-                TextButton(onClick = { displayPrevious = !displayPrevious }) { Text("See History") }
+                TextButton(onClick = { displayPrevious = !displayPrevious }) { Text("See History") } //only displays button after 3 attempts
                 if (displayPrevious){ //history toggleable
                     Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
                         Text(text = "Lowest: ${pastScores.minWith(Comparator.comparingInt {it})}ms")//finds and displays min result
                         Text(text = "Average: ${findAverage()}ms")
                         Text(text = "Highest: ${pastScores.maxWith(Comparator.comparingInt {it})}ms") //finds and displays max result
                         Text(text = " ")
-                        Text(text = "Attempt ${(pastScores.lastIndex)+1}: ${pastScores[(pastScores.lastIndex)]}ms")
+                        Text(text = "Attempt ${(pastScores.lastIndex)+1}: ${pastScores[(pastScores.lastIndex)]}ms") //3B finds attempt info
                         Text(text = "Attempt ${(pastScores.lastIndex)}: ${pastScores[(pastScores.lastIndex)-1]}ms")
                         Text(text = "Attempt ${(pastScores.lastIndex)-1}: ${pastScores[(pastScores.lastIndex)-2]}ms")
                     }
@@ -137,7 +137,7 @@ fun Go() {
             when (buttonMode) {
                 "START" -> {
                     FilledTonalButton(
-                        onClick = { coroutineScope.launch { wait1() } },
+                        onClick = { coroutineScope.launch { wait1() } }, //starts the co routine for the wait function | nb. wait is called wait1 as wait is a default function irrelevant to this.
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text("START")
@@ -145,7 +145,7 @@ fun Go() {
                 }
                 "WAIT" -> {
                     OutlinedButton(
-                        { Toast.makeText(context, "Wait for end button.", Toast.LENGTH_LONG).show() }, //shows text tip at the bottom asking user to wait until "END" appears
+                        { Toast.makeText(context, "Wait for end button.", Toast.LENGTH_LONG).show() }, //shows tool tip at the bottom asking user to wait until "END" appears
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text("WAIT")
@@ -161,23 +161,23 @@ fun Go() {
     }
 }
 
-suspend fun wait1(){
+suspend fun wait1(){ //suspend makes it able to be part of a co routine
     buttonMode = "WAIT"
     signalTimeMsStart = System.currentTimeMillis()
-    val waitDuration = rand(1000, 3000).toLong()
+    val waitDuration = rand(1000, 3000).toLong() //assigns the wait duration to the current time
     delay(waitDuration.milliseconds)
-    signalTimeMsStart += waitDuration
+    signalTimeMsStart += waitDuration //adds the wait duration to the start time to remove the wait time from the total calculation.
     buttonMode = "END"
 }
 
 fun end(){
     buttonMode = "START"
     signalTimeMsEnd = System.currentTimeMillis()
-    lastTime = (signalTimeMsEnd - signalTimeMsStart).toInt()
-    pastScores.addLast(lastTime)
+    lastTime = (signalTimeMsEnd - signalTimeMsStart).toInt() //calcualtes and converts to int, saves as last time
+    pastScores.addLast(lastTime) //adds the last time to the past scores array
 }
 
-fun findAverage(): Int {
+fun findAverage(): Int { //finds average
     val average = pastScores.average().toInt()
     return average
 }
